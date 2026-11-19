@@ -1,0 +1,28 @@
+# 部署到 GitHub Pages，并每天自动同步一次数据（GitHub 开源方案 + Devpost 黑客松）
+name: sync-and-deploy
+on:
+  schedule: [{ cron: "0 20 * * *" }]   # 北京时间每天 04:00
+  workflow_dispatch:
+  push: { branches: [main] }
+permissions: { contents: write, pages: write, id-token: write }
+concurrency: { group: pages, cancel-in-progress: false }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: python scripts/sync.py
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+      - run: |
+          git config user.name "sync-bot"; git config user.email "sync-bot@users.noreply.github.com"
+          git add web/data/data.json && git commit -m "data: auto sync" || true
+          git push || true
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: web }
+      - uses: actions/deploy-pages@v4
+        id: deploy

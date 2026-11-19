@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>竞赛速递 · 按报名时间</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><h1>复旦机器人学院 · 竞赛速递</h1>
+<p>依据《复旦大学高水平学科竞赛目录（2026年7月更新）》· <span id="updated"></span></p>
+<nav><a href="index.html">按加分等级</a><a class="on" href="timeline.html">按报名时间</a></nav></header>
+<main>
+<div class="tools"><input type="search" id="kw" placeholder="搜索比赛名 / 院系">
+<label><input type="checkbox" id="robot"> 只看机器人学院相关</label>
+<label><input type="checkbox" id="t1"> 只看一类</label></div>
+<div id="list"></div>
+<div id="hackathons"></div>
+</main>
+<div id="modal"><div class="box"><button class="close">×</button><div id="modal-body"></div></div></div>
+<footer>报名时间按往年整理，每年可能变动，请以官网和学院通知为准</footer>
+<script src="app.js"></script>
+<script>
+loadData().then(data => {
+  const list = document.getElementById("list");
+  const draw = () => {
+    const cs = searchFilter(data.contests, kw.value, robot.checked).filter(c => !t1.checked || c.tier === 1)
+      .map(c => ({ c, s: regStatus(c) })).sort((a, b) => a.s.order - b.s.order || a.c.tier - b.c.tier);
+    const open = cs.filter(x => x.s.open);
+    const groups = {};
+    cs.filter(x => !x.s.open).forEach(x => (groups[x.c.reg[0]] ??= []).push(x.c));
+    let html = open.length ? `<h2>🟢 现在正在报名 · ${open.length} 项</h2><div class="grid">${open.map(x => card(x.c)).join("")}</div>` : "";
+    const order = Object.keys(groups).map(Number).sort((a, b) => monthsUntil(a) - monthsUntil(b));
+    for (const m of order) html += `<h2>${m} 月开始报名 · ${groups[m].length} 项</h2><div class="grid">${groups[m].map(card).join("")}</div>`;
+    list.innerHTML = html || '<p class="dim">没有匹配的比赛</p>';
+  };
+  kw.oninput = robot.onchange = t1.onchange = draw;
+  draw(); bindCards(list, data); renderHackathons(data);
+});
+</script>
+</body></html>
