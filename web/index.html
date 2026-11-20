@@ -2,12 +2,13 @@
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>竞赛速递 · 按加分等级</title><link rel="stylesheet" href="style.css"></head>
 <body>
-<header><h1>复旦机器人学院 · 竞赛速递</h1>
+<header><h1>复旦大学智能机器人与先进制造创新学院 · 竞赛速递</h1>
 <p>依据《复旦大学高水平学科竞赛目录（2026年7月更新）》· <span id="updated"></span></p>
 <nav><a class="on" href="index.html">按加分等级</a><a href="timeline.html">按报名时间</a></nav></header>
 <main>
 <div class="tools"><input type="search" id="kw" placeholder="搜索比赛名 / 院系，如 RoboMaster、数学建模">
 <label><input type="checkbox" id="robot"> 只看机器人学院相关</label></div>
+<p class="notice">⚠️ 一类 / 二类为学校竞赛目录分级，<b>不等于本院保研加分</b>。部分竞赛与本院专业关联度低，能否计入推免加分以学院当年推免细则为准。</p>
 <div id="list"></div>
 <div id="hackathons"></div>
 </main>
@@ -21,7 +22,7 @@ loadData().then(data => {
     const cs = searchFilter(data.contests, kw.value, robot.checked);
     list.innerHTML = [1, 2].map(t => {
       const g = cs.filter(c => c.tier === t);
-      return g.length ? `<h2>${t === 1 ? "一类竞赛（加分最高）" : "二类竞赛"} · ${g.length} 项</h2><div class="grid">${g.map(card).join("")}</div>` : "";
+      return g.length ? `<h2>${t === 1 ? "一类竞赛" : "二类竞赛"} · ${g.length} 项</h2><div class="grid">${g.map(card).join("")}</div>` : "";
     }).join("") || '<p class="dim">没有匹配的比赛</p>';
   };
   kw.oninput = robot.onchange = draw;

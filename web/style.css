@@ -34,3 +34,4 @@ h2{font-size:18px;margin:26px 0 10px;border-left:4px solid #0e3a7a;padding-left:
 .repos{padding-left:18px}.repos li{margin-bottom:8px}
 .month{display:flex;gap:10px;align-items:baseline}
 footer{text-align:center;color:#8a92a0;font-size:12px;padding:30px}
+.notice{background:#fff7e6;border:1px solid #f5d29a;color:#7a5200;border-radius:6px;padding:8px 12px;font-size:13px;margin:4px 0 0}
